@@ -1,8 +1,7 @@
 import { v4 } from "https://deno.land/std/uuid/mod.ts";
-import { save } from "https://deno.land/x/sqlite/mod.ts";
 
 import { User } from "../types.ts";
-import db from "../database.ts";
+import { insertUser, checkIfUserExisted, getUserFromDB } from "../database.ts";
 
 // @desc    Add user
 // @route   Post /api/v1/register
@@ -24,34 +23,61 @@ const addUser = async (
     let userExist: boolean = false;
 
     try {
-      for (const _ of db.query(`SELECT * FROM user WHERE username='${user.username}'`, []))
-        userExist = true;
-      
-      if(!userExist) {
-        db.query(
-          "INSERT INTO user (id, username, password, nickname, token) VALUES (?, ?, ?, ?, ?)",
-          [user.id, user.username, user.password, user.nickname, user.token]
-        );
-        await save(db);
+      userExist = await checkIfUserExisted(user);
+
+      if (!userExist) {
+        await insertUser(user);
       }
     } catch (error) {
       console.log(error);
     }
 
-    if(!userExist) {
+    if (!userExist) {
       response.status = 201;
       response.body = {
         success: true,
         data: user,
       };
-    }else {
+    } else {
       response.status = 400;
       response.body = {
         success: false,
-        msg: 'user with that username already exists!'
-      }
+        msg: "user with that username already exists!",
+      };
     }
   }
 };
 
-export { addUser };
+// @desc    sign in
+// @route   Post /api/v1/login
+const signIn = async (
+  { request, response }: { request: any; response: any },
+) => {
+  const body = await request.body();
+  const { username, password } = body.value;
+
+  if (!request.hasBody) {
+    response.status = 400;
+    response.body = {
+      success: false,
+      msg: "No data",
+    };
+  } else {
+    const dbUser = await getUserFromDB({ username });
+    if (password === dbUser[2]) {
+      response.status = 200;
+      response.body = {
+        success: true,
+        token: dbUser[4]
+      };
+    } else {
+      response.status = 400;
+      response.body = {
+        success: false,
+        msg: "password incorrect",
+      };
+    }
+  }
+};
+
+export { addUser, signIn };
