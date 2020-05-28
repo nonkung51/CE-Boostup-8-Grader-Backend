@@ -13,6 +13,10 @@ db.query(
 	`CREATE TABLE IF NOT EXISTS question (id TEXT PRIMARY KEY UNIQUE, title TEXT, input TEXT, output TEXT, score_per_case INT, question_body TEXT, rank INTEGER, status INTEGER)`,
 	{}
 );
+db.query(
+	`CREATE TABLE IF NOT EXISTS submission_code (id TEXT PRIMARY KEY UNIQUE, user_id TEXT, question_id TEXT, code TEXT)`,
+	{}
+);
 await save(db);
 
 console.log('Database connection established.');
@@ -98,6 +102,26 @@ const insertSubmission = async ({
 	await save(db);
 };
 
+///////////////////////////// Submission Code /////////////////////////
+
+const insertSubmissionCode = async ({
+	id,
+	userId,
+	questionId,
+	code,
+}: {
+	id: string;
+	userId: string;
+	questionId: string;
+	code: string;
+}) => {
+	db.query(
+		"INSERT INTO submission_code (id, user_id, question_id, code) VALUES (?, ?, ?, ?)",
+		[id, userId, questionId, code]
+	);
+	await save(db);
+};
+
 ///////////////////////////// Question ////////////////////////////////
 
 const insertQuestion = async ({
@@ -151,12 +175,12 @@ const toggleQuestionActive = async ({ id }: { id: string }) => {
 	let status: number | undefined;
 	for (const q of db.query('SELECT id, status FROM question', [])) {
 		console.log(q[0] + ' === ' + id);
-		if(q[0] == id) {
+		if (q[0] == id) {
 			status = q[1];
-		}	
+		}
 	}
-	if(status === 1) status = 0;
-	else if(status === 0) status = 1;
+	if (status === 1) status = 0;
+	else if (status === 0) status = 1;
 	db.query(`UPDATE question SET status=${status} WHERE id='${id}'`, {});
 };
 
@@ -169,4 +193,5 @@ export {
 	insertQuestion,
 	listQuestion,
 	toggleQuestionActive,
+	insertSubmissionCode
 };

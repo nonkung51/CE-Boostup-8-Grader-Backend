@@ -1,6 +1,6 @@
 import { Router } from "https://deno.land/x/oak/mod.ts";
-import { addUser, signIn } from "./controller/users.ts";
-import { addQuestion, getQuestions, toggleQuestions } from './controller/questions.ts';
+import { addUser, signIn } from "./controllers/users.ts";
+import { addQuestion, getQuestions, toggleQuestions } from './controllers/questions.ts';
 
 const router = new Router();
 
