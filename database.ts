@@ -1,23 +1,16 @@
-import { open, save } from 'https://deno.land/x/sqlite/mod.ts';
+import { Database } from 'https://deno.land/x/denodb/mod.ts';
 
-const db = await open('test.db');
-db.query(
-	`CREATE TABLE IF NOT EXISTS user (id TEXT PRIMARY KEY UNIQUE, username TEXT UNIQUE, password TEXT, nickname TEXT, token TEXT, score INTEGER)`,
-	{}
-);
-db.query(
-	`CREATE TABLE IF NOT EXISTS submission (id TEXT PRIMARY KEY UNIQUE, user_id TEXT, question_id TEXT, score INTEGER)`,
-	{}
-);
-db.query(
-	`CREATE TABLE IF NOT EXISTS question (id TEXT PRIMARY KEY UNIQUE, title TEXT, input TEXT, output TEXT, score_per_case INT, question_body TEXT, rank INTEGER, status INTEGER)`,
-	{}
-);
-db.query(
-	`CREATE TABLE IF NOT EXISTS submission_code (id TEXT PRIMARY KEY UNIQUE, user_id TEXT, question_id TEXT, code TEXT)`,
-	{}
-);
-await save(db);
+import User from './models/User.ts';
+import Question from './models/Question.ts';
+import Submission from './models/Submission.ts';
+import SubmissionCode from './models/SubmissionCode.ts';
+
+
+const db = new Database('sqlite3', {
+	filepath: './database.sqlite',
+});
+db.link([User, Question, Submission, SubmissionCode]);
+await db.sync();
 
 console.log('Database connection established.');
 
@@ -38,48 +31,27 @@ const insertUser = async ({
 	token: string;
 	score: number;
 }) => {
-	db.query(
-		'INSERT INTO user (id, username, password, nickname, token, score) VALUES (?, ?, ?, ?, ?, ?)',
-		[id, username, password, nickname, token, score]
-	);
-	await save(db);
+	await User.create({ id, username, password, nickname, token, score });
 };
 
 const getUserFromUsername = async ({ username }: { username: string }) => {
-	let user: any;
-	for (const u of db.query(
-		`SELECT * FROM user WHERE username='${username}'`,
-		[]
-	)) {
-		user = u;
-		break;
-	}
-
+	let user: any = await User.where('username', username).first();
 	return user;
 };
 
 const checkIfUserExisted = async ({ username }: { username: string }) => {
 	let userExisted: boolean = false;
-	for (const _ of db.query(
-		`SELECT * FROM user WHERE username='${username}'`,
-		[]
-	)) {
+	let user: any = await User.where('username', username).first();
+	if (user !== undefined) {
 		userExisted = true;
-		break;
 	}
 	return userExisted;
 };
 
 const getUserIDFromToken = async ({ token }: { token: string }) => {
-	let userID: string | null = null;
-	for (const u of db.query(
-		`SELECT id FROM user WHERE token='${token}'`,
-		[]
-	)) {
-		userID = u[0];
-		break;
-	}
-	return userID;
+	let user: any = await User.where('token', token).first();
+
+	return user.id;
 };
 
 ///////////////////////////// Submission //////////////////////////////////
@@ -95,11 +67,7 @@ const insertSubmission = async ({
 	questionId: string;
 	score: number;
 }) => {
-	db.query(
-		'INSERT INTO submission (id, user_id, question_id, score) VALUES (?, ?, ?, ?)',
-		[id, userId, questionId, score]
-	);
-	await save(db);
+	await Submission.create({ id, userId, questionId, score });
 };
 
 ///////////////////////////// Submission Code /////////////////////////
@@ -115,11 +83,7 @@ const insertSubmissionCode = async ({
 	questionId: string;
 	code: string;
 }) => {
-	db.query(
-		"INSERT INTO submission_code (id, user_id, question_id, code) VALUES (?, ?, ?, ?)",
-		[id, userId, questionId, code]
-	);
-	await save(db);
+	await SubmissionCode.create({ id, userId, questionId, code });
 };
 
 ///////////////////////////// Question ////////////////////////////////
@@ -143,45 +107,31 @@ const insertQuestion = async ({
 	rank: number;
 	status: number;
 }) => {
-	try {
-		db.query(
-			'INSERT INTO question (id, title, input, output, score_per_case, question_body, rank, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-			[
-				id,
-				title,
-				input,
-				output,
-				scorePerCase,
-				questionBody,
-				rank,
-				status,
-			]
-		);
-		await save(db);
-	} catch (error) {
-		console.log(error);
-	}
+	await Question.create({
+		id,
+		title,
+		input,
+		output,
+		scorePerCase,
+		questionBody,
+		rank,
+		status,
+	});
 };
 
 const listQuestion = async () => {
-	const questions = [];
-	for (const q of db.query('SELECT * FROM question', [])) {
-		questions.push(q);
-	}
+	const questions = await Question.all();
 	return questions;
 };
 
 const toggleQuestionActive = async ({ id }: { id: string }) => {
-	let status: number | undefined;
-	for (const q of db.query('SELECT id, status FROM question', [])) {
-		console.log(q[0] + ' === ' + id);
-		if (q[0] == id) {
-			status = q[1];
-		}
+	let { status } = await Question.select('status').where('id', id).first();
+	if (status == 1) {
+		status = 0;
+	} else if (status == 0) {
+		status = 1;
 	}
-	if (status === 1) status = 0;
-	else if (status === 0) status = 1;
-	db.query(`UPDATE question SET status=${status} WHERE id='${id}'`, {});
+	await Question.where('id', id).update('status', status);
 };
 
 export {
@@ -193,5 +143,5 @@ export {
 	insertQuestion,
 	listQuestion,
 	toggleQuestionActive,
-	insertSubmissionCode
+	insertSubmissionCode,
 };

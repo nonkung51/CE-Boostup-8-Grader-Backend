@@ -69,7 +69,7 @@ const signIn = async ({
 	const body = await request.body();
 	const { username, password } = body.value;
 
-	if (!request.hasBody || checkIfUserExisted({ username })) {
+	if (!request.hasBody || !(await checkIfUserExisted({ username }))) {
 		response.status = 400;
 		response.body = {
 			success: false,
@@ -77,11 +77,11 @@ const signIn = async ({
 		};
 	} else {
 		const dbUser = await getUserFromUsername({ username });
-		if (password === dbUser[2]) {
+		if (password === dbUser.password) {
 			response.status = 200;
 			response.body = {
 				success: true,
-				token: dbUser[4],
+				token: dbUser.token,
 			};
 		} else {
 			response.status = 400;
