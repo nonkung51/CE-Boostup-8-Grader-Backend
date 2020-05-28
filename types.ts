@@ -14,6 +14,13 @@ export interface Submission {
 	score: number;
 }
 
+export interface SubmissionCode {
+	id: string;
+	userId: string;
+	questionId: string
+	code: string;
+}
+
 export interface Question {
 	id: string;
 	title: string;
