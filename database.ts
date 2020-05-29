@@ -5,7 +5,6 @@ import Question from './models/Question.ts';
 import Submission from './models/Submission.ts';
 import SubmissionCode from './models/SubmissionCode.ts';
 
-
 const db = new Database('sqlite3', {
 	filepath: './database.sqlite',
 });
@@ -86,6 +85,35 @@ const insertSubmissionCode = async ({
 	await SubmissionCode.create({ id, userId, questionId, code });
 };
 
+const checkSubmissionExist = async ({
+	userId,
+	questionId,
+}: {
+	userId: string;
+	questionId: string;
+}) => {
+	const submissionCode = await SubmissionCode.where('user_id', userId).where(
+		'question_id',
+		questionId
+	);
+	if (submissionCode.length > 0) {
+		return true;
+	}
+	return false;
+};
+
+const updateSubmissionCode = async ({
+	userId,
+	questionId,
+	code,
+}: {
+	userId: string;
+	questionId: string;
+	code: string;
+}) => {
+	await SubmissionCode.where('user_id', userId).where('question_id', questionId).update({ code });
+};
+
 ///////////////////////////// Question ////////////////////////////////
 
 const insertQuestion = async ({
@@ -144,4 +172,6 @@ export {
 	listQuestion,
 	toggleQuestionActive,
 	insertSubmissionCode,
+	checkSubmissionExist,
+	updateSubmissionCode
 };
