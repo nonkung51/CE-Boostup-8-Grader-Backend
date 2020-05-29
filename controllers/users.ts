@@ -1,4 +1,5 @@
 import { v4 } from 'https://deno.land/std/uuid/mod.ts';
+import * as bcrypt from "https://deno.land/x/bcrypt/mod.ts";
 
 import { User } from '../types.ts';
 import {
@@ -29,6 +30,7 @@ const addUser = async ({
 		user.id = v4.generate();
 		user.token = v4.generate();
 		user.score = 0;
+		user.password = await bcrypt.hash(user.password);
 		let userExist: boolean = false;
 
 		try {
@@ -77,7 +79,7 @@ const signIn = async ({
 		};
 	} else {
 		const dbUser = await getUserFromUsername({ username });
-		if (password === dbUser.password) {
+		if (await bcrypt.compare(password, dbUser.password)) {
 			response.status = 200;
 			response.body = {
 				success: true,
