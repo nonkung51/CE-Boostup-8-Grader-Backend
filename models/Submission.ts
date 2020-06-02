@@ -4,10 +4,12 @@ class Submission extends Model {
 	static table = 'submissions';
 
 	static fields = {
-        id: DATA_TYPES.STRING,
-        userId: DATA_TYPES.STRING,
-        questionId: DATA_TYPES.STRING,
-        score: DATA_TYPES.INTEGER,
+		id: DATA_TYPES.STRING,
+		userId: DATA_TYPES.STRING,
+		questionId: DATA_TYPES.STRING,
+		score: DATA_TYPES.INTEGER,
+                time: DATA_TYPES.INTEGER,
+                result: DATA_TYPES.STRING
 	};
 }
 

@@ -60,13 +60,22 @@ const insertSubmission = async ({
 	userId,
 	questionId,
 	score,
+	time,
+	result,
 }: {
 	id: string;
 	userId: string;
 	questionId: string;
 	score: number;
+	time: number;
+	result: string;
 }) => {
-	await Submission.create({ id, userId, questionId, score });
+	await Submission.create({ id, userId, questionId, score, time, result });
+};
+
+const lookupSubmission = async ({ userId }: { userId: string }) => {
+	const submissions = await Submission.where('userId', userId).get();
+	return submissions;
 };
 
 ///////////////////////////// Submission Code /////////////////////////
@@ -92,11 +101,10 @@ const checkSubmissionExist = async ({
 	userId: string;
 	questionId: string;
 }) => {
-	const submissionCode = await SubmissionCode.where('user_id', userId).where(
-		'question_id',
-		questionId
-	);
-	if (submissionCode.length > 0) {
+	const submissionCode = await SubmissionCode.where('userId', userId)
+		.where('questionId', questionId)
+		.first();
+	if (submissionCode) {
 		return true;
 	}
 	return false;
@@ -111,7 +119,22 @@ const updateSubmissionCode = async ({
 	questionId: string;
 	code: string;
 }) => {
-	await SubmissionCode.where('user_id', userId).where('question_id', questionId).update({ code });
+	await SubmissionCode.where('userId', userId)
+		.where('questionId', questionId)
+		.update({ code });
+};
+
+const lookupSubmissionCode = async ({
+	userId,
+	questionId,
+}: {
+	userId: string;
+	questionId: string;
+}) => {
+	const submissionCode = await SubmissionCode.where('userId', userId)
+		.where('questionId', questionId)
+		.get();
+	return submissionCode;
 };
 
 ///////////////////////////// Question ////////////////////////////////
@@ -173,5 +196,7 @@ export {
 	toggleQuestionActive,
 	insertSubmissionCode,
 	checkSubmissionExist,
-	updateSubmissionCode
+	updateSubmissionCode,
+	lookupSubmissionCode,
+	lookupSubmission
 };
