@@ -175,6 +175,12 @@ const listQuestion = async () => {
 	return questions;
 };
 
+const getQuestionFromID = async ({id}: {id:string}) => {
+	const question = await Question.where('id', id).first();
+	console.log(question);
+	return question;
+}
+
 const toggleQuestionActive = async ({ id }: { id: string }) => {
 	let { status } = await Question.select('status').where('id', id).first();
 	if (status == 1) {
@@ -198,5 +204,6 @@ export {
 	checkSubmissionExist,
 	updateSubmissionCode,
 	lookupSubmissionCode,
-	lookupSubmission
+	lookupSubmission,
+	getQuestionFromID
 };

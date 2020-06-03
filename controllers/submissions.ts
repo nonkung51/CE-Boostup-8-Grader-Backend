@@ -7,7 +7,8 @@ import {
 	updateSubmissionCode,
 	insertSubmission,
 	lookupSubmissionCode,
-	lookupSubmission
+	lookupSubmission,
+	getQuestionFromID
 } from '../database.ts';
 
 const getSubmissionCode = async ({
@@ -65,8 +66,31 @@ const fetchSubmission = async ({
 			msg: 'No data.',
 		};
 	} else {
+		const userId = await getUserIDFromToken({ token });
+		const { input, output, scorePerCase } = await getQuestionFromID({ id: questionId });
 		// send code to server
 		// fetch('http://localhost:3456/compile')
+		// {
+		// 	"questionId": "1234",
+		// 	"userId": "X1234",
+		// 	"input": "1 2$.$2 3$.$3 5$.$3 5$.$3 5$.$3 5$.$3 5$.$3 5$.$1000000000 5$.$2 3",
+		// 	"output": "3$.$5$.$8$.$100$.$100$.$100$.$100$.$100$.$1000000005$.$5",
+		// 	"scorePerCase": "10",
+		// 	"sourceCode": "#include<stdio.h>\r\nint main() {int a,b,i; scanf(\"%d%d\",&a,&b); printf(\"%d\",a+b); return 0; }"
+		// }
+		const body = {
+			questionId,
+			userId,
+			sourceCode: code,
+			input,
+			output,
+			scorePerCase
+		};
+		await fetch('http://localhost:3456/compiler', {
+			method: 'get',
+			body: JSON.stringify(body),
+			headers: { 'Content-Type': 'application/json' },
+		});
 		console.log('fetch to compile (grader)');
 		// TODO
 		// then add to submission code
@@ -119,6 +143,8 @@ const createSubmission = async ({
 		result: string;
 	} = body.value;
 
+	console.log(body.value);
+
 	if (!request.hasBody) {
 		response.status = 400;
 		response.body = {
@@ -164,11 +190,11 @@ const getSubmission = async ({
 		};
 	} else {
 		const userId: string = await getUserIDFromToken({ token });
-		const submissions = await lookupSubmission({userId});
+		const submissions = await lookupSubmission({ userId });
 		response.status = 200;
 		response.body = {
 			success: true,
-			data: submissions
+			data: submissions,
 		};
 	}
 };
