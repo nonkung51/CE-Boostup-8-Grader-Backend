@@ -1,11 +1,12 @@
 import { v4 } from 'https://deno.land/std/uuid/mod.ts';
-import * as bcrypt from "https://deno.land/x/bcrypt/mod.ts";
+import * as bcrypt from 'https://deno.land/x/bcrypt/mod.ts';
 
 import { User } from '../types.ts';
 import {
 	insertUser,
 	checkIfUserExisted,
 	getUserFromUsername,
+	getLeaderboard,
 } from '../database.ts';
 
 // @desc    Add user
@@ -95,4 +96,20 @@ const signIn = async ({
 	}
 };
 
-export { addUser, signIn };
+const leaderboard = async ({
+	request,
+	response,
+}: {
+	request: any;
+	response: any;
+}) => {
+	const users = await getLeaderboard();
+
+	response.status = 200;
+	response.body = {
+		success: true,
+		users,
+	};
+};
+
+export { addUser, signIn, leaderboard };

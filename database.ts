@@ -65,6 +65,12 @@ const getUserIDFromToken = async ({ token }: { token: string }) => {
 	return user.id;
 };
 
+const getLeaderboard = async () => {
+	let users: any = await (await User.select('nickname', 'score').orderBy('score').all()).reverse();
+
+	return users;
+};
+
 ///////////////////////////// Submission //////////////////////////////////
 
 const insertSubmission = async ({
@@ -237,6 +243,7 @@ export {
 	updateSubmissionCode,
 	lookupSubmissionCode,
 	lookupSubmission,
+	getLeaderboard,
 	getQuestionFromID,
 	getScoreByQuestion,
 	addScoreToUser,
