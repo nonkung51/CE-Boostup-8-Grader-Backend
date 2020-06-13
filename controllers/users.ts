@@ -1,5 +1,5 @@
 import { v4 } from 'https://deno.land/std/uuid/mod.ts';
-import * as bcrypt from "https://deno.land/x/bcrypt/mod.ts";
+import * as bcrypt from 'https://deno.land/x/bcrypt/mod.ts';
 
 import { User } from '../types.ts';
 import {

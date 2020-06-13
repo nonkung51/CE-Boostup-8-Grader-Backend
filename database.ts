@@ -252,6 +252,7 @@ export {
 	updateSubmissionCode,
 	lookupSubmissionCode,
 	lookupSubmission,
+	getLeaderboard,
 	getQuestionFromID,
 	getScoreByQuestion,
 	addScoreToUser,
