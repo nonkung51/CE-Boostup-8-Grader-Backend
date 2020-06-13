@@ -8,8 +8,8 @@ class Submission extends Model {
 		userId: DATA_TYPES.STRING,
 		questionId: DATA_TYPES.STRING,
 		score: DATA_TYPES.INTEGER,
-                time: DATA_TYPES.INTEGER,
-                result: DATA_TYPES.STRING
+		time: DATA_TYPES.INTEGER,
+		result: DATA_TYPES.STRING,
 	};
 }
 
