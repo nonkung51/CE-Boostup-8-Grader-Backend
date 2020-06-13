@@ -15,6 +15,18 @@ console.log('Database connection established.');
 
 ////////////////////////// User ///////////////////////////////
 
+const addScoreToUser = async ({
+	userId,
+	score,
+}: {
+	userId: string;
+	score: number;
+}) => {
+	const user = await User.where('id', userId).first();
+	let newScore = score + user.score;
+	await User.where('id', userId).update('score', newScore);
+};
+
 const insertUser = async ({
 	id,
 	username,
@@ -100,6 +112,27 @@ const insertSubmissionCode = async ({
 	await SubmissionCode.create({ id, userId, questionId, code });
 };
 
+const getScoreByQuestion = async ({
+	userId,
+	questionId,
+}: {
+	userId: string;
+	questionId: string;
+}) => {
+	console.log('list submissions: ');
+	const submissions = await Submission.where('userId', userId)
+		.where('questionId', questionId)
+		.all();
+	let max = 0;
+	submissions.map(({ score }) => {
+		if (max < score) {
+			max = score;
+		}
+	});
+
+	return max;
+};
+
 const checkSubmissionExist = async ({
 	userId,
 	questionId,
@@ -181,6 +214,11 @@ const listQuestion = async () => {
 	return questions;
 };
 
+const getQuestionFromID = async ({ id }: { id: string }) => {
+	const question = await Question.where('id', id).first();
+	return question;
+};
+
 const toggleQuestionActive = async ({ id }: { id: string }) => {
 	let { status } = await Question.select('status').where('id', id).first();
 	if (status == 1) {
@@ -205,5 +243,8 @@ export {
 	updateSubmissionCode,
 	lookupSubmissionCode,
 	lookupSubmission,
-	getLeaderboard
+	getLeaderboard,
+	getQuestionFromID,
+	getScoreByQuestion,
+	addScoreToUser,
 };

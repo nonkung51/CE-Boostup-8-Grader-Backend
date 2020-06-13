@@ -4,12 +4,12 @@ class User extends Model {
 	static table = 'users';
 
 	static fields = {
-        id: DATA_TYPES.STRING,
-        username: DATA_TYPES.STRING,
-        password: DATA_TYPES.STRING,
-        nickname: DATA_TYPES.STRING,
-        token: DATA_TYPES.STRING,
-        score: DATA_TYPES.INTEGER
+		id: DATA_TYPES.STRING,
+		username: DATA_TYPES.STRING,
+		password: DATA_TYPES.STRING,
+		nickname: DATA_TYPES.STRING,
+		token: DATA_TYPES.STRING,
+		score: DATA_TYPES.INTEGER,
 	};
 
 	static defaults = {

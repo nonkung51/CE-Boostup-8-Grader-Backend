@@ -4,10 +4,10 @@ class SubmissionCode extends Model {
 	static table = 'submissions_code';
 
 	static fields = {
-        id: DATA_TYPES.STRING,
-        userId: DATA_TYPES.STRING,
-        questionId: DATA_TYPES.STRING,
-        code: DATA_TYPES.STRING,
+		id: DATA_TYPES.STRING,
+		userId: DATA_TYPES.STRING,
+		questionId: DATA_TYPES.STRING,
+		code: DATA_TYPES.STRING,
 	};
 }
 
