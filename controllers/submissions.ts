@@ -7,7 +7,10 @@ import {
 	updateSubmissionCode,
 	insertSubmission,
 	lookupSubmissionCode,
-	lookupSubmission
+	lookupSubmission,
+	getQuestionFromID,
+	getScoreByQuestion,
+	addScoreToUser
 } from '../database.ts';
 
 const getSubmissionCode = async ({
@@ -65,8 +68,20 @@ const fetchSubmission = async ({
 			msg: 'No data.',
 		};
 	} else {
-		// send code to server
-		// fetch('http://localhost:3456/compile')
+		const userId = await getUserIDFromToken({ token });
+		const { input, output, scorePerCase } = await getQuestionFromID({ id: questionId });
+		const body = {
+			questionId,
+			userId,
+			sourceCode: code,
+			input,
+			output,
+			scorePerCase
+		};
+		await fetch('http://localhost:3456/compiler', {
+			body: JSON.stringify(body),
+			headers: { 'Content-Type': 'application/json' },
+		});
 		console.log('fetch to compile (grader)');
 		// TODO
 		// then add to submission code
@@ -127,7 +142,8 @@ const createSubmission = async ({
 		};
 	} else {
 		try {
-			insertSubmission({
+			let before = await getScoreByQuestion({ userId, questionId });
+			await insertSubmission({
 				id: v4.generate(),
 				userId,
 				questionId,
@@ -135,6 +151,10 @@ const createSubmission = async ({
 				result,
 				time,
 			});
+			let after = await getScoreByQuestion({ userId, questionId });
+			const diff: number = after - before;
+			await addScoreToUser({ userId, score: diff })
+			console.log('Diff', diff);
 		} catch (error) {
 			console.log(error);
 		}
@@ -164,11 +184,11 @@ const getSubmission = async ({
 		};
 	} else {
 		const userId: string = await getUserIDFromToken({ token });
-		const submissions = await lookupSubmission({userId});
+		const submissions = await lookupSubmission({ userId });
 		response.status = 200;
 		response.body = {
 			success: true,
-			data: submissions
+			data: submissions,
 		};
 	}
 };
