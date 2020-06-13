@@ -255,4 +255,5 @@ export {
 	getQuestionFromID,
 	getScoreByQuestion,
 	addScoreToUser,
+	getLeaderboard
 };
