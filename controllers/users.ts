@@ -6,6 +6,11 @@ import {
 	insertUser,
 	checkIfUserExisted,
 	getUserFromUsername,
+<<<<<<< Updated upstream
+=======
+	getLeaderboard,
+	renameUser,
+>>>>>>> Stashed changes
 } from '../database.ts';
 
 // @desc    Add user
@@ -95,4 +100,54 @@ const signIn = async ({
 	}
 };
 
+<<<<<<< Updated upstream
 export { addUser, signIn };
+=======
+const leaderboard = async ({
+	request,
+	response,
+}: {
+	request: any;
+	response: any;
+}) => {
+	const users = await getLeaderboard();
+
+	response.status = 200;
+	response.body = {
+		success: true,
+		users,
+	};
+};
+
+const editNickname = async ({
+	request,
+	response,
+}: {
+	request: any;
+	response: any;
+}) => {
+	const body = await request.body();
+	const {
+		token,
+		nickname,
+	}: { token: string; nickname: string } = body.value;
+
+	if (!request.hasBody) {
+		response.status = 400;
+		response.body = {
+			success: false,
+			msg: 'No data.',
+		};
+	} else {
+		await renameUser({ token, nickname });
+
+		response.status = 200;
+		response.body = {
+			success: true,
+			msg: `Success changing name to ${nickname}.`,
+		};
+	}
+};
+
+export { addUser, signIn, leaderboard, editNickname };
+>>>>>>> Stashed changes

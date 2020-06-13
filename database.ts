@@ -65,6 +65,23 @@ const getUserIDFromToken = async ({ token }: { token: string }) => {
 	return user.id;
 };
 
+<<<<<<< Updated upstream
+=======
+const renameUser = async ({ token, nickname }: {token :string; nickname: string}) => {
+	try {
+		await User.where('token', token).update({ nickname });
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+const getLeaderboard = async () => {
+	let users: any = await (await User.select('nickname', 'score').orderBy('score').all()).reverse();
+
+	return users;
+};
+
+>>>>>>> Stashed changes
 ///////////////////////////// Submission //////////////////////////////////
 
 const insertSubmission = async ({
@@ -225,6 +242,7 @@ const toggleQuestionActive = async ({ id }: { id: string }) => {
 
 export {
 	insertUser,
+	renameUser,
 	checkIfUserExisted,
 	getUserFromUsername,
 	getUserIDFromToken,
