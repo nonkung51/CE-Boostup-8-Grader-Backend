@@ -7,6 +7,7 @@ import {
 	checkIfUserExisted,
 	getUserFromUsername,
 	getLeaderboard,
+	renameUser,
 } from '../database.ts';
 
 // @desc    Add user
@@ -112,4 +113,34 @@ const leaderboard = async ({
 	};
 };
 
-export { addUser, signIn, leaderboard };
+const editNickname = async ({
+	request,
+	response,
+}: {
+	request: any;
+	response: any;
+}) => {
+	const body = await request.body();
+	const {
+		token,
+		nickname,
+	}: { token: string; nickname: string } = body.value;
+
+	if (!request.hasBody) {
+		response.status = 400;
+		response.body = {
+			success: false,
+			msg: 'No data.',
+		};
+	} else {
+		await renameUser({ token, nickname });
+
+		response.status = 200;
+		response.body = {
+			success: true,
+			msg: `Success changing name to ${nickname}.`,
+		};
+	}
+};
+
+export { addUser, signIn, leaderboard, editNickname };

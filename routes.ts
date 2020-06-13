@@ -1,5 +1,5 @@
 import { Router } from 'https://deno.land/x/oak/mod.ts';
-import { addUser, signIn, leaderboard } from './controllers/users.ts';
+import { addUser, signIn, leaderboard, editNickname } from './controllers/users.ts';
 import {
 	addQuestion,
 	getQuestions,
@@ -12,6 +12,7 @@ const router = new Router();
 router
 	.post('/api/v1/register', addUser)
 	.post('/api/v1/login', signIn)
+	.post('/api/v1/nickname', editNickname)
 	.get('/api/v1/leaderboard', leaderboard)
 	.post('/api/v1/admin/lkmsicksanskc2213osi', addQuestion) // no secure at all ;-;
 	.put('/api/v1/admin/skacmkmscaskmcs213', toggleQuestions)
