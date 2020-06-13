@@ -65,8 +65,6 @@ const getUserIDFromToken = async ({ token }: { token: string }) => {
 	return user.id;
 };
 
-<<<<<<< Updated upstream
-=======
 const renameUser = async ({ token, nickname }: {token :string; nickname: string}) => {
 	try {
 		await User.where('token', token).update({ nickname });
@@ -81,7 +79,6 @@ const getLeaderboard = async () => {
 	return users;
 };
 
->>>>>>> Stashed changes
 ///////////////////////////// Submission //////////////////////////////////
 
 const insertSubmission = async ({

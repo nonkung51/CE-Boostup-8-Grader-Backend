@@ -6,11 +6,8 @@ import {
 	insertUser,
 	checkIfUserExisted,
 	getUserFromUsername,
-<<<<<<< Updated upstream
-=======
 	getLeaderboard,
 	renameUser,
->>>>>>> Stashed changes
 } from '../database.ts';
 
 // @desc    Add user
@@ -100,9 +97,6 @@ const signIn = async ({
 	}
 };
 
-<<<<<<< Updated upstream
-export { addUser, signIn };
-=======
 const leaderboard = async ({
 	request,
 	response,
@@ -150,4 +144,3 @@ const editNickname = async ({
 };
 
 export { addUser, signIn, leaderboard, editNickname };
->>>>>>> Stashed changes
