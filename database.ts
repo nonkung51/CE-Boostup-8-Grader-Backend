@@ -1,12 +1,13 @@
-import { Database } from 'https://deno.land/x/denodb/mod.ts';
+import { Database } from 'https://deno.land/x/denodb@v1.0.0/mod.ts';
 
 import User from './models/User.ts';
 import Question from './models/Question.ts';
 import Submission from './models/Submission.ts';
 import SubmissionCode from './models/SubmissionCode.ts';
 
-const db = new Database('sqlite3', {
-	filepath: './database.sqlite',
+const db = new Database('mongo', {
+	uri: 'mongodb://127.0.0.1:27017',
+	database: 'test',
 });
 db.link([User, Question, Submission, SubmissionCode]);
 await db.sync();
@@ -74,7 +75,9 @@ const renameUser = async ({ token, nickname }: {token :string; nickname: string}
 };
 
 const getLeaderboard = async () => {
-	let users: any = await (await User.select('nickname', 'score').orderBy('score').all()).reverse();
+	let users: any = await (
+		await User.select('nickname', 'score').orderBy('score').all()
+	).reverse();
 
 	return users;
 };
@@ -132,7 +135,7 @@ const getScoreByQuestion = async ({
 		.where('questionId', questionId)
 		.all();
 	let max = 0;
-	submissions.map(({ score }) => {
+	submissions.map(({ score }: { score: number; }) => {
 		if (max < score) {
 			max = score;
 		}
