@@ -1,4 +1,4 @@
-import { DATA_TYPES, Model } from 'https://deno.land/x/denodb/mod.ts';
+import { DATA_TYPES, Model } from 'https://deno.land/x/denodb@v1.0.0/mod.ts';
 
 class Question extends Model {
 	static table = 'questions';
