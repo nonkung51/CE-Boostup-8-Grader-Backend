@@ -80,12 +80,16 @@ const signIn = async ({
 			msg: 'No data or User is not existed.',
 		};
 	} else {
-		const dbUser = await getUserFromUsername({ username });
+		const dbUser: User = await getUserFromUsername({ username });
+		const { token, nickname }: { token: string; nickname: string } = dbUser;
 		if (await bcrypt.compare(password, dbUser.password)) {
 			response.status = 200;
 			response.body = {
 				success: true,
-				token: dbUser.token,
+				user: {
+					token,
+					nickname
+				},
 			};
 		} else {
 			response.status = 400;
