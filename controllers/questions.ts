@@ -1,6 +1,6 @@
 import { v4 } from 'https://deno.land/std/uuid/mod.ts';
 import { Question } from '../types.ts';
-import { insertQuestion, listQuestion, toggleQuestionActive } from '../database.ts';
+import { insertQuestion, listQuestion, toggleQuestionActive, updateQuestion } from '../database.ts';
 
 // @desc    Add submission
 // @route   Post /api/v1/submit
@@ -42,6 +42,33 @@ const getQuestions = async ({ response }: { response: any }) => {
 }
 
 
+const editQuestion = async ({
+	request,
+	response,
+}: {
+	request: any;
+	response: any;
+}) => {
+	const body = await request.body();
+
+	if (!request.hasBody) {
+		response.status = 400;
+		response.body = {
+			success: false,
+			msg: 'No data.',
+        };
+	} else {
+		const question: Question = body.value;
+        await updateQuestion(question);
+        response.status = 201
+        response.body = {
+            success: true,
+            data: question,
+        }
+	}
+};
+
+
 // @desc    Update question status
 // @route   
 const toggleQuestions = async ({
@@ -69,4 +96,4 @@ const toggleQuestions = async ({
     }
 }
 
-export { addQuestion, getQuestions, toggleQuestions };
+export { addQuestion, getQuestions, toggleQuestions, editQuestion };

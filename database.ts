@@ -66,7 +66,13 @@ const getUserIDFromToken = async ({ token }: { token: string }) => {
 	return user.id;
 };
 
-const renameUser = async ({ token, nickname }: {token :string; nickname: string}) => {
+const renameUser = async ({
+	token,
+	nickname,
+}: {
+	token: string;
+	nickname: string;
+}) => {
 	try {
 		await User.where('token', token).update({ nickname });
 	} catch (error) {
@@ -134,7 +140,7 @@ const getScoreByQuestion = async ({
 		.where('questionId', questionId)
 		.all();
 	let max = 0;
-	submissions.map(({ score }: { score: number; }) => {
+	submissions.map(({ score }: { score: number }) => {
 		if (max < score) {
 			max = score;
 		}
@@ -219,6 +225,36 @@ const insertQuestion = async ({
 	});
 };
 
+const updateQuestion = async ({
+	id,
+	title,
+	input,
+	output,
+	scorePerCase,
+	questionBody,
+	rank,
+	status,
+}: {
+	id: string;
+	title: string;
+	input: string;
+	output: string;
+	scorePerCase: number;
+	questionBody: string;
+	rank: number;
+	status: number;
+}) => {
+	await Question.where('id', id).update({
+		title,
+		input,
+		output,
+		scorePerCase,
+		questionBody,
+		rank,
+		status,
+	});
+};
+
 const listQuestion = async () => {
 	const questions = await Question.all();
 	return questions;
@@ -239,8 +275,12 @@ const toggleQuestionActive = async ({ id }: { id: string }) => {
 	await Question.where('id', id).update('status', status);
 };
 
-const addSuccessSubmission = async ({ id }: {id: string}) => {
-	const { finished }: {finished: number} = await Question.select('finished').where('id', id).first();
+const addSuccessSubmission = async ({ id }: { id: string }) => {
+	const { finished }: { finished: number } = await Question.select(
+		'finished'
+	)
+		.where('id', id)
+		.first();
 	await Question.where('id', id).update('finished', finished + 1);
 };
 
@@ -252,6 +292,7 @@ export {
 	getUserIDFromToken,
 	insertSubmission,
 	insertQuestion,
+	updateQuestion,
 	listQuestion,
 	toggleQuestionActive,
 	insertSubmissionCode,
@@ -263,5 +304,5 @@ export {
 	getQuestionFromID,
 	getScoreByQuestion,
 	addScoreToUser,
-	addSuccessSubmission
+	addSuccessSubmission,
 };
