@@ -130,7 +130,6 @@ const getScoreByQuestion = async ({
 	userId: string;
 	questionId: string;
 }) => {
-	console.log('list submissions: ');
 	const submissions = await Submission.where('userId', userId)
 		.where('questionId', questionId)
 		.all();
@@ -240,6 +239,11 @@ const toggleQuestionActive = async ({ id }: { id: string }) => {
 	await Question.where('id', id).update('status', status);
 };
 
+const addSuccessSubmission = async ({ id }: {id: string}) => {
+	const { finished }: {finished: number} = await Question.select('finished').where('id', id).first();
+	await Question.where('id', id).update('finished', finished + 1);
+};
+
 export {
 	insertUser,
 	renameUser,
@@ -259,4 +263,5 @@ export {
 	getQuestionFromID,
 	getScoreByQuestion,
 	addScoreToUser,
+	addSuccessSubmission
 };

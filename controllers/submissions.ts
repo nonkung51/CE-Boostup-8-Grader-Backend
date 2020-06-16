@@ -10,7 +10,8 @@ import {
 	lookupSubmission,
 	getQuestionFromID,
 	getScoreByQuestion,
-	addScoreToUser
+	addScoreToUser,
+	addSuccessSubmission
 } from '../database.ts';
 
 const getSubmissionCode = async ({
@@ -69,14 +70,16 @@ const fetchSubmission = async ({
 		};
 	} else {
 		const userId = await getUserIDFromToken({ token });
-		const { input, output, scorePerCase } = await getQuestionFromID({ id: questionId });
+		const { input, output, scorePerCase } = await getQuestionFromID({
+			id: questionId,
+		});
 		const body = {
 			questionId,
 			userId,
 			sourceCode: code,
 			input,
 			output,
-			scorePerCase
+			scorePerCase,
 		};
 		await fetch('http://localhost:3456/compiler', {
 			body: JSON.stringify(body),
@@ -153,8 +156,19 @@ const createSubmission = async ({
 			});
 			let after = await getScoreByQuestion({ userId, questionId });
 			const diff: number = after - before;
-			await addScoreToUser({ userId, score: diff })
-			console.log('Diff', diff);
+			const {
+				input,
+				scorePerCase,
+			}: {
+				input: string;
+				scorePerCase: number;
+			} = await getQuestionFromID({ id: questionId });
+			const maxScore: number =
+				input.split('$.$').length * scorePerCase;
+			if (maxScore === after && diff != 0) {
+				await addSuccessSubmission({ id: questionId });
+			}
+			await addScoreToUser({ userId, score: diff });
 		} catch (error) {
 			console.log(error);
 		}
