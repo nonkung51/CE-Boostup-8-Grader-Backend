@@ -30,4 +30,5 @@ export interface Question {
 	questionBody: string;
 	rank: number;
 	status: number;
+	types: string;
 }

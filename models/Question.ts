@@ -13,6 +13,7 @@ class Question extends Model {
                 rank: DATA_TYPES.INTEGER,
                 status: DATA_TYPES.INTEGER,
                 finished: DATA_TYPES.INTEGER,
+                types: DATA_TYPES.STRING
         };
         
         static defaults = {

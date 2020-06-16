@@ -203,6 +203,7 @@ const insertQuestion = async ({
 	questionBody,
 	rank,
 	status,
+	types
 }: {
 	id: string;
 	title: string;
@@ -212,6 +213,7 @@ const insertQuestion = async ({
 	questionBody: string;
 	rank: number;
 	status: number;
+	types: string;
 }) => {
 	await Question.create({
 		id,
@@ -222,6 +224,7 @@ const insertQuestion = async ({
 		questionBody,
 		rank,
 		status,
+		types
 	});
 };
 
@@ -234,6 +237,7 @@ const updateQuestion = async ({
 	questionBody,
 	rank,
 	status,
+	types,
 }: {
 	id: string;
 	title: string;
@@ -243,6 +247,7 @@ const updateQuestion = async ({
 	questionBody: string;
 	rank: number;
 	status: number;
+	types: string;
 }) => {
 	await Question.where('id', id).update({
 		title,
@@ -252,6 +257,7 @@ const updateQuestion = async ({
 		questionBody,
 		rank,
 		status,
+		types
 	});
 };
 
