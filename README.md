@@ -15,5 +15,5 @@
 ### วิธีใช้งาน
 
 ```
-$ deno run --allow-net --allow-read --allow-write --allow-plugin --unstable
+$ deno run --allow-net --allow-read --allow-write --allow-plugin --unstable server.ts
 ```
