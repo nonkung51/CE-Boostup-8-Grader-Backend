@@ -82,6 +82,7 @@ const fetchSubmission = async ({
 			scorePerCase,
 		};
 		await fetch('http://localhost:3456/compiler', {
+			method: 'POST',
 			body: JSON.stringify(body),
 			headers: { 'Content-Type': 'application/json' },
 		});

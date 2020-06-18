@@ -60,7 +60,7 @@ const editQuestion = async ({
 	} else {
 		const question: Question = body.value;
         await updateQuestion(question);
-        response.status = 201
+        response.status = 202
         response.body = {
             success: true,
             data: question,
@@ -89,7 +89,7 @@ const toggleQuestions = async ({
 	} else {
         const { id } = body.value;
         await toggleQuestionActive({id});
-        response.status = 201
+        response.status = 202
         response.body = {
             success: true,
         }
