@@ -260,4 +260,4 @@ const getSubmission = async ({
 // Flow
 // Fetch to grader => grader fetch back => use that data to create new submission, submission code
 
-export { fetchSubmission, createSubmission, getSubmissionCode, getSubmission };
+export { fetchSubmission, createSubmission, getSubmissionCode, getSubmission, getFinishSubmissionCode };
