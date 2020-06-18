@@ -115,6 +115,15 @@ const lookupSubmission = async ({ userId }: { userId: string }) => {
 
 ///////////////////////////// Submission Code /////////////////////////
 
+const getSubmissionCodeById = async ({
+	questionId,
+}: {
+	questionId: string;
+}) => {
+	const submissionCode = await SubmissionCode.where('questionId', questionId).all();
+	return submissionCode;
+};
+
 const insertSubmissionCode = async ({
 	id,
 	userId,
@@ -203,7 +212,7 @@ const insertQuestion = async ({
 	questionBody,
 	rank,
 	status,
-	types
+	types,
 }: {
 	id: string;
 	title: string;
@@ -224,7 +233,7 @@ const insertQuestion = async ({
 		questionBody,
 		rank,
 		status,
-		types
+		types,
 	});
 };
 
@@ -257,7 +266,7 @@ const updateQuestion = async ({
 		questionBody,
 		rank,
 		status,
-		types
+		types,
 	});
 };
 
@@ -311,4 +320,5 @@ export {
 	getScoreByQuestion,
 	addScoreToUser,
 	addSuccessSubmission,
+	getSubmissionCodeById,
 };

@@ -11,7 +11,8 @@ import {
 	getQuestionFromID,
 	getScoreByQuestion,
 	addScoreToUser,
-	addSuccessSubmission
+	addSuccessSubmission,
+	getSubmissionCodeById
 } from '../database.ts';
 
 const getSubmissionCode = async ({
@@ -44,6 +45,52 @@ const getSubmissionCode = async ({
 		};
 	}
 };
+
+const getFinishSubmissionCode = async ({
+	request,
+	response,
+}: {
+	request: any;
+	response: any;
+}) => {
+	const body = await request.body();
+	const { token, questionId } = body.value;
+
+	if (!request.hasBody) {
+		response.status = 400;
+		response.body = {
+			success: false,
+			msg: 'No data.',
+		};
+	} else {
+		const userId = await getUserIDFromToken({ token });
+		const {
+			input,
+			scorePerCase,
+		}: {
+			input: string;
+			scorePerCase: number;
+		} = await getQuestionFromID({ id: questionId });
+		const maxScore: number =
+			input.split('$.$').length * scorePerCase;
+		let userScore: number = await getScoreByQuestion({ userId, questionId });
+		if(userScore === maxScore) {
+			const submissionCode = await getSubmissionCodeById({ questionId });
+
+			response.status = 200;
+			response.body = {
+				success: true,
+				data: submissionCode
+			};
+		} else {
+			response.status = 400;
+			response.body = {
+				success: false,
+				msg: 'You are not allowed.',
+			};
+		}
+	}
+}
 
 // @desc    Add submission
 // @route   Post /api/v1/submit
@@ -169,7 +216,9 @@ const createSubmission = async ({
 			if (maxScore === after && diff != 0) {
 				await addSuccessSubmission({ id: questionId });
 			}
-			await addScoreToUser({ userId, score: diff });
+			if (diff > 0) {
+				await addScoreToUser({ userId, score: diff });
+			}
 		} catch (error) {
 			console.log(error);
 		}

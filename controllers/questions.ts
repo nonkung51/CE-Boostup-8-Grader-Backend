@@ -34,11 +34,12 @@ const addQuestion = async ({
 // @desc    Get all questions
 // @route   GET /api/v1/questions
 const getQuestions = async ({ response }: { response: any }) => {
-    const questions = await listQuestion();
+	const questions = await listQuestion();
+	response.status = 201;
     response.body = {
-        success: true,
+		success: true,
         data: questions
-    }
+	}
 }
 
 
@@ -95,5 +96,8 @@ const toggleQuestions = async ({
         }
     }
 }
+
+
+
 
 export { addQuestion, getQuestions, toggleQuestions, editQuestion };
