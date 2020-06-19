@@ -12,7 +12,7 @@ import {
 	getScoreByQuestion,
 	addScoreToUser,
 	addSuccessSubmission,
-	getSubmissionCodeById
+	getFinishedSubmissionCodeByQuestionId
 } from '../database.ts';
 
 const getSubmissionCode = async ({
@@ -75,7 +75,7 @@ const getFinishSubmissionCode = async ({
 			input.split('$.$').length * scorePerCase;
 		let userScore: number = await getScoreByQuestion({ userId, questionId });
 		if(userScore === maxScore) {
-			const submissionCode = await getSubmissionCodeById({ questionId });
+			const submissionCode = await getFinishedSubmissionCodeByQuestionId({ questionId });
 
 			response.status = 200;
 			response.body = {
@@ -141,7 +141,7 @@ const fetchSubmission = async ({
 			// check if there's already code for (user, question) pair
 			// if there is edit else create new one
 			if (await checkSubmissionExist({ userId, questionId })) {
-				await updateSubmissionCode({ code, userId, questionId });
+				await updateSubmissionCode({ code, userId, questionId, finished: false });
 			} else {
 				await insertSubmissionCode({
 					code,
@@ -218,6 +218,10 @@ const createSubmission = async ({
 			}
 			if (diff > 0) {
 				await addScoreToUser({ userId, score: diff });
+			}
+
+			if(score === maxScore) {
+				await updateSubmissionCode({ userId, questionId, finished: true, code: '' });
 			}
 		} catch (error) {
 			console.log(error);

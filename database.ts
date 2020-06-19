@@ -115,12 +115,12 @@ const lookupSubmission = async ({ userId }: { userId: string }) => {
 
 ///////////////////////////// Submission Code /////////////////////////
 
-const getSubmissionCodeById = async ({
+const getFinishedSubmissionCodeByQuestionId = async ({
 	questionId,
 }: {
 	questionId: string;
 }) => {
-	const submissionCode = await SubmissionCode.where('questionId', questionId).all();
+	const submissionCode = await SubmissionCode.where('questionId', questionId).where('finished', true).all();
 	return submissionCode;
 };
 
@@ -178,14 +178,22 @@ const updateSubmissionCode = async ({
 	userId,
 	questionId,
 	code,
+	finished
 }: {
 	userId: string;
 	questionId: string;
 	code: string;
+	finished: boolean;
 }) => {
-	await SubmissionCode.where('userId', userId)
+	if(finished) {
+		await SubmissionCode.where('userId', userId)
+		.where('questionId', questionId)
+		.update({ finished });
+	} else {
+		await SubmissionCode.where('userId', userId)
 		.where('questionId', questionId)
 		.update({ code });
+	}
 };
 
 const lookupSubmissionCode = async ({
@@ -320,5 +328,5 @@ export {
 	getScoreByQuestion,
 	addScoreToUser,
 	addSuccessSubmission,
-	getSubmissionCodeById,
+	getFinishedSubmissionCodeByQuestionId,
 };

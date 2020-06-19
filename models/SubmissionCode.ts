@@ -8,7 +8,12 @@ class SubmissionCode extends Model {
 		userId: DATA_TYPES.STRING,
 		questionId: DATA_TYPES.STRING,
 		code: DATA_TYPES.STRING,
+		finished: DATA_TYPES.BOOLEAN
 	};
+
+	static defaults = {
+		finished: false
+	}
 }
 
 export default SubmissionCode;
