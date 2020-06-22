@@ -8,6 +8,9 @@ import {
 	getUserFromUsername,
 	getLeaderboard,
 	renameUser,
+	getUserIDFromToken,
+	getStats,
+	getAllStats
 } from '../database.ts';
 
 // @desc    Add user
@@ -81,14 +84,17 @@ const signIn = async ({
 		};
 	} else {
 		const dbUser: User = await getUserFromUsername({ username });
-		const { token, nickname }: { token: string; nickname: string } = dbUser;
+		const {
+			token,
+			nickname,
+		}: { token: string; nickname: string } = dbUser;
 		if (await bcrypt.compare(password, dbUser.password)) {
 			response.status = 200;
 			response.body = {
 				success: true,
 				user: {
 					token,
-					nickname
+					nickname,
 				},
 			};
 		} else {
@@ -147,4 +153,43 @@ const editNickname = async ({
 	}
 };
 
-export { addUser, signIn, leaderboard, editNickname };
+const getUserStats = async ({
+	request,
+	response,
+}: {
+	request: any;
+	response: any;
+}) => {
+	const body = await request.body();
+	const {
+		token,
+	}: { token: string; } = body.value;
+
+	const userId = await getUserIDFromToken({ token });
+	const stats = await getStats({ userId });
+
+	if (!request.hasBody) {
+		response.status = 400;
+		response.body = {
+			success: false,
+			msg: 'No data.',
+		};
+	} else {
+		response.status = 200;
+		response.body = {
+			success: true,
+			data: stats,
+		};
+	}
+};
+
+const getUsersStats = async ({ response }: { response: any }) => {
+	const stats = await getAllStats();
+	response.status = 200;
+	response.body = {
+		success: true,
+		data: stats
+	}
+}
+
+export { addUser, signIn, leaderboard, editNickname, getUserStats, getUsersStats };

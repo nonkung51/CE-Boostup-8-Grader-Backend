@@ -4,6 +4,8 @@ import {
 	signIn,
 	leaderboard,
 	editNickname,
+	getUserStats,
+	getUsersStats,
 } from './controllers/users.ts';
 import {
 	addQuestion,
@@ -26,6 +28,8 @@ router
 	.post('/api/v1/login', signIn)
 	.post('/api/v1/nickname', editNickname)
 	.get('/api/v1/leaderboard', leaderboard)
+	.post('/api/v1/stats', getUserStats)
+	.get('/api/v1/admin/2jcsk2132dcsdc13', getUsersStats)
 	.post('/api/v1/admin/lkmsicksanskc2213osi', addQuestion) // no secure at all ;-;
 	.put('/api/v1/admin/skacmkmscaskmcs213', toggleQuestions)
 	.put('/api/v1/admin/asxcsadwdascs213', editQuestion)

@@ -120,7 +120,9 @@ const getFinishedSubmissionCodeByQuestionId = async ({
 }: {
 	questionId: string;
 }) => {
-	const submissionCode = await SubmissionCode.where('questionId', questionId).where('finished', true).all();
+	const submissionCode = await SubmissionCode.where('questionId', questionId)
+		.where('finished', true)
+		.all();
 	return submissionCode;
 };
 
@@ -178,21 +180,21 @@ const updateSubmissionCode = async ({
 	userId,
 	questionId,
 	code,
-	finished
+	finished,
 }: {
 	userId: string;
 	questionId: string;
 	code: string;
 	finished: boolean;
 }) => {
-	if(finished) {
+	if (finished) {
 		await SubmissionCode.where('userId', userId)
-		.where('questionId', questionId)
-		.update({ finished });
+			.where('questionId', questionId)
+			.update({ finished });
 	} else {
 		await SubmissionCode.where('userId', userId)
-		.where('questionId', questionId)
-		.update({ code });
+			.where('questionId', questionId)
+			.update({ code });
 	}
 };
 
@@ -307,6 +309,53 @@ const addSuccessSubmission = async ({ id }: { id: string }) => {
 	await Question.where('id', id).update('finished', finished + 1);
 };
 
+// Statistics
+const getStats = async ({ userId }: { userId: string }) => {
+	function isFullScore(str: string) {
+		if (
+			str.split('-').length === 1 &&
+			str.split('X').length === 1 &&
+			str.split('T').length === 1
+		) {
+			return true;
+		}
+		return false;
+	}
+	const { score }: { score: number } = await User.where(
+		'id',
+		userId
+	).first();
+	const submissions: [any] = await Submission.select('time', 'result')
+		.where('userId', userId)
+		.get();
+	let sigmaTime = 0,
+		fullScoreSubmit = 0,
+		submit = 0;
+	submissions.forEach(
+		({ time, result }: { time: number; result: string }) => {
+			sigmaTime += time;
+			submit += 1;
+			if (isFullScore(result)) {
+				fullScoreSubmit += 1;
+			}
+		}
+	);
+	return { sigmaTime, submit, fullScoreSubmit, score };
+};
+
+const getAllStats = async () => {
+	const users = await User.select('id', 'nickname').get();
+	const stats: any[] = await Promise.all(
+		users.map(
+			async ({ id, nickname }: { id: string; nickname: string }) => {
+				const stat = await getStats({ userId: id });
+				return { id, nickname, ...stat };
+			}
+		)
+	);
+	return stats;
+};
+
 export {
 	insertUser,
 	renameUser,
@@ -329,4 +378,6 @@ export {
 	addScoreToUser,
 	addSuccessSubmission,
 	getFinishedSubmissionCodeByQuestionId,
+	getStats,
+	getAllStats,
 };

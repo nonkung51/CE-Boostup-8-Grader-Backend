@@ -14,6 +14,7 @@ class User extends Model {
 
 	static defaults = {
 		score: 0,
+		nickname: 'anonymous'
 	};
 }
 
