@@ -10,7 +10,8 @@ import {
 	renameUser,
 	getUserIDFromToken,
 	getStats,
-	getAllStats
+	getAllStats,
+	changeUserPassword,
 } from '../database.ts';
 
 // @desc    Add user
@@ -153,6 +154,37 @@ const editNickname = async ({
 	}
 };
 
+const changePassword = async ({
+	request,
+	response,
+}: {
+	request: any;
+	response: any;
+}) => {
+	const body = await request.body();
+	const {
+		token,
+		password,
+	}: { token: string; password: string } = body.value;
+
+	if (!request.hasBody) {
+		response.status = 400;
+		response.body = {
+			success: false,
+			msg: 'No data.',
+		};
+	} else {
+		const hashPassword = await bcrypt.hash(password)
+		await changeUserPassword({ token, password: hashPassword });
+
+		response.status = 200;
+		response.body = {
+			success: true,
+			msg: `Success changing password.`,
+		};
+	}
+};
+
 const getUserStats = async ({
 	request,
 	response,
@@ -192,4 +224,4 @@ const getUsersStats = async ({ response }: { response: any }) => {
 	}
 }
 
-export { addUser, signIn, leaderboard, editNickname, getUserStats, getUsersStats };
+export { addUser, signIn, leaderboard, editNickname, getUserStats, getUsersStats, changePassword };

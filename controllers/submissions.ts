@@ -128,11 +128,13 @@ const fetchSubmission = async ({
 			output,
 			scorePerCase,
 		};
-		await fetch('http://localhost:3456/compiler', {
+		const res = await fetch('http://localhost:3456/compiler', {
 			method: 'POST',
 			body: JSON.stringify(body),
 			headers: { 'Content-Type': 'application/json' },
 		});
+		const resJson = await res.json();
+		
 		console.log('fetch to compile (grader)');
 		// TODO
 		// then add to submission code
@@ -157,7 +159,7 @@ const fetchSubmission = async ({
 		response.status = 200;
 		response.body = {
 			success: true,
-			msg: 'Code submitted to server.',
+			resJson,
 		};
 	}
 };

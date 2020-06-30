@@ -80,6 +80,20 @@ const renameUser = async ({
 	}
 };
 
+const changeUserPassword = async ({
+	token,
+	password,
+}: {
+	token: string;
+	password: string;
+}) => {
+	try {
+		await User.where('token', token).update({ password });
+	} catch (error) {
+		console.log(error);
+	}
+};
+
 const getLeaderboard = async () => {
 	let users: any = await (
 		await User.select('nickname', 'score').orderBy('score').all()
@@ -362,6 +376,7 @@ export {
 	checkIfUserExisted,
 	getUserFromUsername,
 	getUserIDFromToken,
+	changeUserPassword,
 	insertSubmission,
 	insertQuestion,
 	updateQuestion,
