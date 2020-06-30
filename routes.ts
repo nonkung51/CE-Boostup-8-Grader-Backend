@@ -6,6 +6,7 @@ import {
 	editNickname,
 	getUserStats,
 	getUsersStats,
+	changePassword,
 } from './controllers/users.ts';
 import {
 	addQuestion,
@@ -27,6 +28,7 @@ router
 	.post('/api/v1/register', addUser)
 	.post('/api/v1/login', signIn)
 	.post('/api/v1/nickname', editNickname)
+	.post('/api/v1/change_password', changePassword)
 	.get('/api/v1/leaderboard', leaderboard)
 	.post('/api/v1/stats', getUserStats)
 	.get('/api/v1/admin/2jcsk2132dcsdc13', getUsersStats)

@@ -5,9 +5,11 @@ import Question from './models/Question.ts';
 import Submission from './models/Submission.ts';
 import SubmissionCode from './models/SubmissionCode.ts';
 
+import { DATABASE_URI, DATABASE_NAME } from './config.js';
+
 const db = new Database('mongo', {
-	uri: 'mongodb://127.0.0.1:27017',
-	database: 'test',
+	uri: DATABASE_URI,
+	database: DATABASE_NAME,
 });
 db.link([User, Question, Submission, SubmissionCode]);
 await db.sync();

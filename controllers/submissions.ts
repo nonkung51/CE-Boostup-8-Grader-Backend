@@ -15,6 +15,8 @@ import {
 	getFinishedSubmissionCodeByQuestionId
 } from '../database.ts';
 
+import { GRADER_URL } from '../config.js';
+
 const getSubmissionCode = async ({
 	request,
 	response,
@@ -128,7 +130,7 @@ const fetchSubmission = async ({
 			output,
 			scorePerCase,
 		};
-		const res = await fetch('http://localhost:3456/compiler', {
+		const res = await fetch(`${GRADER_URL}/compiler`, {
 			method: 'POST',
 			body: JSON.stringify(body),
 			headers: { 'Content-Type': 'application/json' },
