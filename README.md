@@ -17,3 +17,12 @@
 ```
 $ deno run --allow-net --allow-read --allow-write --allow-plugin --unstable server.ts
 ```
+
+เพิ่ม config.js เพื่อตั้งค่าให้ระบบ
+```
+// config.js
+
+export const GRADER_URL = '';
+export const DATABASE_URI = '';
+export const DATABASE_NAME = '';
+```
