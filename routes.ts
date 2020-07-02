@@ -11,6 +11,7 @@ import {
 import {
 	addQuestion,
 	getQuestions,
+	graderGetQuestions,
 	toggleQuestions,
 	editQuestion,
 } from './controllers/questions.ts';
@@ -36,6 +37,7 @@ router
 	.put('/api/v1/admin/skacmkmscaskmcs213', toggleQuestions)
 	.put('/api/v1/admin/asxcsadwdascs213', editQuestion)
 	.get('/api/v1/questions', getQuestions)
+	.get('/api/v1/admin/2sacsacmk231', graderGetQuestions)
 	.post('/api/v1/get_finish_code', getFinishSubmissionCode)
 	.post('/api/v1/list_submission', getSubmission)
 	.post('/api/v1/submission', fetchSubmission)

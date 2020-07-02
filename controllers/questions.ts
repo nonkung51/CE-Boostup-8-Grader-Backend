@@ -1,6 +1,12 @@
 import { v4 } from 'https://deno.land/std/uuid/mod.ts';
 import { Question } from '../types.ts';
-import { insertQuestion, listQuestion, toggleQuestionActive, updateQuestion } from '../database.ts';
+import {
+	insertQuestion,
+	listQuestion,
+	toggleQuestionActive,
+	updateQuestion,
+	listQuestionGrader,
+} from '../database.ts';
 
 // @desc    Add submission
 // @route   Post /api/v1/submit
@@ -18,16 +24,16 @@ const addQuestion = async ({
 		response.body = {
 			success: false,
 			msg: 'No data.',
-        };
+		};
 	} else {
 		const question: Question = body.value;
-        question.id = v4.generate();
-        await insertQuestion(question);
-        response.status = 201
-        response.body = {
-            success: true,
-            data: question,
-        }
+		question.id = v4.generate();
+		await insertQuestion(question);
+		response.status = 201;
+		response.body = {
+			success: true,
+			data: question,
+		};
 	}
 };
 
@@ -36,12 +42,20 @@ const addQuestion = async ({
 const getQuestions = async ({ response }: { response: any }) => {
 	const questions = await listQuestion();
 	response.status = 201;
-    response.body = {
+	response.body = {
 		success: true,
-        data: questions
-	}
-}
+		data: questions,
+	};
+};
 
+const graderGetQuestions = async ({ response }: { response: any }) => {
+	const questions = await listQuestionGrader();
+	response.status = 201;
+	response.body = {
+		success: true,
+		data: questions,
+	};
+};
 
 const editQuestion = async ({
 	request,
@@ -57,21 +71,20 @@ const editQuestion = async ({
 		response.body = {
 			success: false,
 			msg: 'No data.',
-        };
+		};
 	} else {
 		const question: Question = body.value;
-        await updateQuestion(question);
-        response.status = 202
-        response.body = {
-            success: true,
-            data: question,
-        }
+		await updateQuestion(question);
+		response.status = 202;
+		response.body = {
+			success: true,
+			data: question,
+		};
 	}
 };
 
-
 // @desc    Update question status
-// @route   
+// @route
 const toggleQuestions = async ({
 	request,
 	response,
@@ -86,18 +99,21 @@ const toggleQuestions = async ({
 		response.body = {
 			success: false,
 			msg: 'No data.',
-        };
+		};
 	} else {
-        const { id } = body.value;
-        await toggleQuestionActive({id});
-        response.status = 202
-        response.body = {
-            success: true,
-        }
-    }
-}
+		const { id } = body.value;
+		await toggleQuestionActive({ id });
+		response.status = 202;
+		response.body = {
+			success: true,
+		};
+	}
+};
 
-
-
-
-export { addQuestion, getQuestions, toggleQuestions, editQuestion };
+export {
+	addQuestion,
+	getQuestions,
+	graderGetQuestions,
+	toggleQuestions,
+	editQuestion,
+};

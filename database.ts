@@ -297,7 +297,25 @@ const updateQuestion = async ({
 };
 
 const listQuestion = async () => {
-	const questions = await Question.all();
+	const questions = await Question.select(
+		'finished',
+		'id',
+		'title',
+		'scorePerCase',
+		'questionBody',
+		'rank',
+		'status',
+		'types'
+	).all();
+	return questions;
+};
+
+const listQuestionGrader = async () => {
+	const questions = await Question.select(
+		'id',
+		'input',
+		'output'
+	).all();
 	return questions;
 };
 
@@ -383,6 +401,7 @@ export {
 	insertQuestion,
 	updateQuestion,
 	listQuestion,
+	listQuestionGrader,
 	toggleQuestionActive,
 	insertSubmissionCode,
 	checkSubmissionExist,
