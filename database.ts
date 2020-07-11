@@ -5,12 +5,20 @@ import Question from './models/Question.ts';
 import Submission from './models/Submission.ts';
 import SubmissionCode from './models/SubmissionCode.ts';
 
-import { DATABASE_URI, DATABASE_NAME } from './config.js';
+import { DATABASE_URI, DATABASE_NAME, DEBUG_MODE } from './config.js';
 
-const db = new Database('mongo', {
-	uri: DATABASE_URI,
-	database: DATABASE_NAME,
-});
+let db: Database;
+if (DEBUG_MODE) {
+	db = new Database('sqlite3', {
+		filepath: './database.sqlite',
+	});
+} else {
+	db = new Database('mongo', {
+		uri: DATABASE_URI,
+		database: DATABASE_NAME,
+	});
+}
+
 db.link([User, Question, Submission, SubmissionCode]);
 await db.sync();
 
@@ -125,7 +133,19 @@ const insertSubmission = async ({
 };
 
 const lookupSubmission = async ({ userId }: { userId: string }) => {
-	const submissions = await Submission.where('userId', userId).get();
+	let submissions = await Submission.where('userId', userId).get();
+	submissions = await Promise.all(submissions.map(async (sub: any) => {
+		const {
+			input,
+			scorePerCase,
+		}: {
+			input: string;
+			scorePerCase: number;
+		} = await getQuestionFromID({ id: sub.questionId });
+		const maxScore: number =
+			input.split('$.$').length * scorePerCase;
+		return { ...sub, maxScore };
+	}))
 	return submissions;
 };
 
