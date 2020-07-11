@@ -25,4 +25,6 @@ $ deno run --allow-net --allow-read --allow-write --allow-plugin --unstable serv
 export const GRADER_URL = '';
 export const DATABASE_URI = '';
 export const DATABASE_NAME = '';
+
+export const DEBUG_MODE = true/false;
 ```
